@@ -4,9 +4,21 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>Small Things Forum</title>
-	<link rel="stylesheet" href="/public/stylsheet.css">
+	<link rel="stylesheet" href="/normalize.css">
+	<link rel="stylesheet" href="/skeleton.css">
+	<link rel="stylesheet" href="/stylesheet.css">
 </head>
 <body>
+	<header>
+		<h1>Compact living</h1>
+		<% if @status %>
+			<p>hi <%= current_user['username']%></p>
+			<a href="/logout">Logout</a>
+		<% else %>
+			<a href="/login">Login</a>
+		<% end %>
+
+	</header>
 	<%= yield %>
 </body>
 </html>

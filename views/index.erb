@@ -2,4 +2,13 @@
 	<input type="hidden" name="_method" value="DELETE"> #NEED THIS FOR METHOD OVERRIDE
 	<input type="submit" value="DELETE THIS PERSON">
 </form> -->
-<h1><%= @bob %></h1>
+
+<% @threads.each do |x| %>
+
+	<h1><a href="/topic/<%= "#{x["id"]}"%>"><%= x["topic"] %></a></h1>
+	<a href="/topic/<%= "#{x["id"]}"%>">
+		<img src="<%= x["img_url"]%>">
+	</a>
+	<p> <%= x["description"] %></p>
+
+<% end %> 
