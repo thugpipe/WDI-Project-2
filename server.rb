@@ -2,6 +2,8 @@ require "sinatra"
 require "bcrypt"
 require "pg"
 require "pry"
+require "redcarpet"
+
 module Forum
 	class Server <Sinatra::Base
 		enable :sessions
@@ -15,6 +17,7 @@ module Forum
 		get "/" do
 			@status = session["user_id"]
 			@threads = @@db.exec("SELECT * FROM threads").to_a
+			session["current_page"] = "/"
 
 			erb :index
 		end
@@ -23,16 +26,18 @@ module Forum
 			@status = session["user_id"]
 			@id = params[:id].to_i
 			@thread = @@db.exec("SELECT topic FROM threads WHERE id = #{@id}").first
-			@posts = @@db.exec("SELECT * FROM posts INNER JOIN users ON (posts.created_by_id = users.id) WHERE thread_id = #{@id}").to_a
+			@posts = @@db.exec("SELECT posts.id, title, content, created_by_id, thread_id, username FROM posts INNER JOIN users ON (users.id = posts.created_by_id) WHERE thread_id = #{@id}").to_a
 			# @posts = @@db.exec("SELECT * FROM posts WHERE thread_id = #{@id}").to_a
-
+			session["current_page"] = "/topic/#{@id}"
 			erb :topic
 		end
 
 		post "/topic" do
+			markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, tables: true)
+
 			topic_id = params["topic_id"]
 			title = params["title"]
-			content = params["content"]
+			content = markdown.render(params["content"])
 			user_id = params["user_id"]
 
 			@@db.exec_params("INSERT INTO posts (title, content, created_by_id, thread_id) VALUES ($1,$2,$3,$4)",[title, content, user_id, topic_id])
@@ -57,6 +62,7 @@ module Forum
 
 		get "/login" do
 			@status = session["user_id"]
+
 			erb :login
 		end
 
@@ -70,7 +76,7 @@ module Forum
 				if BCrypt::Password.new(@user["password_digest"]) == login_password
 					session["user_id"] = @user["id"]
 					@login_status = "#{@user["username"]} you are logged in!"
-					redirect '/login'
+					redirect session["current_page"]
 				else
 					@login_status = "Invalid password"
 					erb :login
@@ -83,18 +89,46 @@ module Forum
 
 		get "/logout" do
 				session["user_id"] = false
+				session["current_page"] = "/login"
 				redirect '/login'
 		end
 
 		get "/post/:id" do
 			@status = session["user_id"]
 			@id = params[:id].to_i
-			@post = @@db.exec("SELECT post FROM posts WHERE id = #{@id}").first
-			@comments = @@db.exec("SELECT * FROM comments WHERE post_id = #{@id}").to_a
+			@post = @@db.exec("SELECT * FROM posts WHERE id = #{@id}").first
+			if @status
+				@user_liked = @@db.exec("SELECT * FROM likes WHERE post_id = #{@id} AND user_id = #{@status}").to_a
+			else
+				@user_liked = []
+			end
+			@num_likes = @@db.exec("SELECT * FROM likes WHERE post_id = #{@id}").to_a.length
+			@comments = @@db.exec("SELECT comments.id, user_id, content, username FROM comments INNER JOIN users ON (comments.user_id = users.id) WHERE post_id = #{@id}").to_a
 			# @posts = @@db.exec("SELECT * FROM posts WHERE thread_id = #{@id}").to_a
+			session["current_page"] = "/post/#{@id}"
 
-			erb :topic
+			erb :post
 
+		end
+
+		post "/post" do
+			post_id = params["post_id"]
+			comment = params["comment"]
+			user_id = params["user_id"]
+
+			@@db.exec_params("INSERT INTO comments (post_id, user_id, content) VALUES ($1,$2,$3)",[post_id, user_id, comment])
+
+			redirect '/post/' + post_id
+
+		end
+
+		post "/like" do
+			post_id = params["post_id"]
+			user_id = params["user_id"]
+
+			@@db.exec_params("INSERT INTO likes (user_id, post_id) VALUES ($1,$2)",[user_id, post_id])
+
+			redirect '/post/' + post_id
 		end
 	end
 end

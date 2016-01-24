@@ -3,7 +3,7 @@
 <%  @posts.each do |x| %>
 
 	<h3> <a href="/post/<%= x['id'] %>"><%= x["title"] %></a> </h3>
-	<h5>Posted By: <%= x["username"]%></h5>
+	<h5>Posted By: <%= x["username"]%> post no. <%= x["id"]%></h5>
 
 	<p><%= x["content"] %></p>
 

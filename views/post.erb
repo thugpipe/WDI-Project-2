@@ -1,2 +1,48 @@
-<%= @post %>
+<h1><%= @post['title']%></h1>
+<p><%= @post['content']%></p>
+
+<% if @num_likes == 1 %>
+	<h6>1 user likes this post</h6>
+<% elsif @num_likes == 0 %>
+	<h6>Be the first to like this post!</h6>
+<% else %>
+	<h6><%= @num_likes %> users like this post</h6>
+<% end %>
+
+<% if @status %>
+	<% if @user_liked == [] %>
+		<form action="/like" method="post">
+			<input type="hidden" name="post_id" value="<%= @id %>">
+			<input type="hidden" name="user_id" value="<%= current_user['id'] %>">
+			<input type="submit" value="Like this post">
+		</form>
+	<% else %>
+		<h6>you have already liked this</h6>
+	<% end %>
+<% end %>
+
+<h4>Comments:</h4>
+
+<%  @comments.each do |x| %>
+
+	<h6><%= x["username"]%> says:</h6>
+
+	<p><%= x["content"] %></p>
+
+<% end %>
+
+<% if @status %>
+	<form action="/post" method="post">
+		<input type="hidden" name="post_id" value="<%= @id %>">
+		<input type="hidden" name="user_id" value="<%= current_user['id'] %>">
+		<label for="comment">Comment:</label>
+		<input type="text" name="comment">
+		<input type="submit">
+	</form>
+<% else %>
+	<a href="/login">you must login to comment</a>
+	<a href="/signup">signup</a>
+<% end %>
+
+
 
