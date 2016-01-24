@@ -3,12 +3,7 @@
 	<input type="submit" value="DELETE THIS PERSON">
 </form> -->
 
-<% @threads.each do |x| %>
+<h2>we have a mission statment of some kind</h2>
+<h5>and when I figure out what it is you will be the first to konw</h5>
 
-	<h1><a href="/topic/<%= "#{x["id"]}"%>"><%= x["topic"] %></a></h1>
-	<a href="/topic/<%= "#{x["id"]}"%>">
-		<img src="<%= x["img_url"]%>">
-	</a>
-	<p> <%= x["description"] %></p>
-
-<% end %> 
+<a href="/topics">Go the the Catagories!</a>

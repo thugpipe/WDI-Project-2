@@ -1,0 +1,9 @@
+<% @threads.each do |x| %>
+
+	<h1><a href="/topic/<%= "#{x["id"]}"%>"><%= x["topic"] %></a></h1>
+	<a href="/topic/<%= "#{x["id"]}"%>">
+		<img src="<%= x["img_url"]%>">
+	</a>
+	<p> <%= x["description"] %></p>
+
+<% end %> 

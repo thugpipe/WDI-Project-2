@@ -13,21 +13,38 @@ module Forum
 		def current_user
 			@user = @@db.exec_params("SELECT * FROM users WHERE id = $1",[session["user_id"]]).first 
 		end
-		
+
 		get "/" do
 			@status = session["user_id"]
-			@threads = @@db.exec("SELECT * FROM threads").to_a
 			session["current_page"] = "/"
-
 			erb :index
+		end	
+
+		get "/topics" do
+			@status = session["user_id"]
+			@threads = @@db.exec("SELECT * FROM threads").to_a
+			session["current_page"] = "/topics"
+
+			erb :topics
 		end
 
 		get "/topic/:id" do
 			@status = session["user_id"]
 			@id = params[:id].to_i
 			@thread = @@db.exec("SELECT topic FROM threads WHERE id = #{@id}").first
-			@posts = @@db.exec("SELECT posts.id, title, content, created_by_id, thread_id, username FROM posts INNER JOIN users ON (users.id = posts.created_by_id) WHERE thread_id = #{@id}").to_a
-			# @posts = @@db.exec("SELECT * FROM posts WHERE thread_id = #{@id}").to_a
+			@posts = @@db.exec(<<-SQL).to_a
+				SELECT posts.id, title, content, created_by_id, thread_id, username
+				FROM posts INNER JOIN users ON (users.id = posts.created_by_id)
+				WHERE thread_id = #{@id}
+				ORDER BY posts.id
+				SQL
+
+			@posts.each do |post|
+				num_comments = @@db.exec("SELECT * FROM comments WHERE post_id = #{post['id']}").to_a.length
+				num_likes = @@db.exec("SELECT * FROM likes WHERE post_id = #{post['id']}").to_a.length
+				post['num_comments'] = num_comments
+				post['num_likes'] = num_likes
+			end
 			session["current_page"] = "/topic/#{@id}"
 			erb :topic
 		end
@@ -40,7 +57,10 @@ module Forum
 			content = markdown.render(params["content"])
 			user_id = params["user_id"]
 
-			@@db.exec_params("INSERT INTO posts (title, content, created_by_id, thread_id) VALUES ($1,$2,$3,$4)",[title, content, user_id, topic_id])
+			@@db.exec_params(<<-SQL, [title, content, user_id, topic_id])
+				INSERT INTO posts (title, content, created_by_id, thread_id)
+				VALUES ($1,$2,$3,$4)
+				SQL
 
 			redirect '/topic/' + topic_id
 
@@ -56,7 +76,9 @@ module Forum
 			username = params["login_name"]
 			encrypted_password = BCrypt::Password.create(params["login_password"])
 
-			@@db.exec_params("INSERT INTO users (name, username, password_digest) VALUES ($1,$2,$3)", [name, username, encrypted_password])
+			@@db.exec_params(<<-SQL, [name, username, encrypted_password])
+				INSERT INTO users (name, username, password_digest) VALUES ($1,$2,$3)
+				SQL
 			redirect '/login'
 		end
 
@@ -103,8 +125,12 @@ module Forum
 				@user_liked = []
 			end
 			@num_likes = @@db.exec("SELECT * FROM likes WHERE post_id = #{@id}").to_a.length
-			@comments = @@db.exec("SELECT comments.id, user_id, content, username FROM comments INNER JOIN users ON (comments.user_id = users.id) WHERE post_id = #{@id}").to_a
-			# @posts = @@db.exec("SELECT * FROM posts WHERE thread_id = #{@id}").to_a
+			@comments = @@db.exec(<<-SQL).to_a
+				SELECT comments.id, user_id, content, username
+				FROM comments INNER JOIN users ON (comments.user_id = users.id)
+				WHERE post_id = #{@id}
+				SQL
+
 			session["current_page"] = "/post/#{@id}"
 
 			erb :post
@@ -116,7 +142,9 @@ module Forum
 			comment = params["comment"]
 			user_id = params["user_id"]
 
-			@@db.exec_params("INSERT INTO comments (post_id, user_id, content) VALUES ($1,$2,$3)",[post_id, user_id, comment])
+			@@db.exec_params(<<-SQL,[post_id, user_id, comment])
+				INSERT INTO comments (post_id, user_id, content) VALUES ($1,$2,$3)
+				SQL
 
 			redirect '/post/' + post_id
 

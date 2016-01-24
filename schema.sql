@@ -50,7 +50,8 @@ CREATE TABLE likes(
 -- ]
 INSERT INTO threads (topic, description, img_url) VALUES('Small Apartments', 'The compact spaces we choose to cram all our crap and how we do it.', null);
 INSERT INTO threads (topic, description, img_url) VALUES('Small Cars', 'Small cars dont have to be crap cars.', null);
-INSERT INTO threads (topic, description, img_url) VALUES('Small bikes', 'Whats your flavor? Folding, BMX, or Minivelo?  When space is at a premium or in a urban environment a compact ride is much easier to live with!', 'https://farm4.staticflickr.com/3737/10742532246_19a7cccbb9_q.jpg');
-INSERT INTO threads (topic, description, img_url) VALUES('Small electronics', 'Small is where it is at, how many space age gadgets can you fit in your pockets?', null);
+INSERT INTO threads (topic, description, img_url) VALUES('Small Bikes', 'Whats your flavor? Folding, BMX, or Minivelo?  When space is at a premium or in a urban environment a compact ride is much easier to live with!', 'https://farm4.staticflickr.com/3737/10742532246_19a7cccbb9_q.jpg');
+INSERT INTO threads (topic, description, img_url) VALUES('Small Electronics', 'Small is where it is at, how many space age gadgets can you fit in your pockets?', null);
 INSERT INTO threads (topic, description, img_url) VALUES('Tiny Trains', 'Who the hell has enough space for trains in an apartment in this city O_o?', null);
+INSERT INTO threads (topic, description, img_url) VALUES('Tiny Pets', 'Itty Bitty feet, big doe eyes, preferably fluffy they do make your small ass apartment less depressing!', null);
  -- topics.each do

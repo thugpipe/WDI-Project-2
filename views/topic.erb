@@ -4,6 +4,8 @@
 
 	<h3> <a href="/post/<%= x['id'] %>"><%= x["title"] %></a> </h3>
 	<h5>Posted By: <%= x["username"]%> post no. <%= x["id"]%></h5>
+	<h6><%= x['num_comments']%> Comments</h6>
+	<h6><%= x['num_likes']%> Likes</h6>
 
 	<p><%= x["content"] %></p>
 
@@ -12,6 +14,7 @@
 		<img src="<%= x["img_url"]%>">
 
 	<% end %>
+
 
 <% end %>
 <% if @status %>
