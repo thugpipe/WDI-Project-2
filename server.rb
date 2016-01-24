@@ -31,7 +31,7 @@ module Forum
 		get "/topic/:id" do
 			@status = session["user_id"]
 			@id = params[:id].to_i
-			@thread = @@db.exec("SELECT topic FROM threads WHERE id = #{@id}").first
+			@thread = @@db.exec("SELECT topic, img_url FROM threads WHERE id = #{@id}").first
 			@posts = @@db.exec(<<-SQL).to_a
 				SELECT posts.id, title, content, created_by_id, thread_id, username
 				FROM posts INNER JOIN users ON (users.id = posts.created_by_id)

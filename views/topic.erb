@@ -1,33 +1,37 @@
 <h1><%= @thread["topic"] %></h1>
 
 <%  @posts.each do |x| %>
+	
+	<div class="six columns" id="post<%= x['id'] %>"
+		<h3> <a href="/post/<%= x['id'] %>"><%= x["title"] %></a> </h3>
+		<h5>Posted By: <%= x["username"]%> post no. <%= x["id"]%></h5>
+		<h6><%= x['num_comments']%> Comments</h6>
+		<h6><%= x['num_likes']%> Likes</h6>
 
-	<h3> <a href="/post/<%= x['id'] %>"><%= x["title"] %></a> </h3>
-	<h5>Posted By: <%= x["username"]%> post no. <%= x["id"]%></h5>
-	<h6><%= x['num_comments']%> Comments</h6>
-	<h6><%= x['num_likes']%> Likes</h6>
+		<p><%= x["content"] %></p>
 
-	<p><%= x["content"] %></p>
+		<% if x["img_url"] %>
 
-	<% if x["img_url"] %>
+			<img src="<%= x["img_url"]%>">
 
-		<img src="<%= x["img_url"]%>">
-
-	<% end %>
+		<% end %>
+	</div>
 
 
 <% end %>
 <% if @status %>
-	<form action="/topic" method="post">
-		<input type="hidden" name="topic_id" value="<%= @id %>">
-		<input type="hidden" name="user_id" value="<%= current_user['id'] %>">
-		<label for="title">Title:</label>
-		<input type="text" name="title">
-		<label for="content">Content:</label>
-		<textarea type="text" name="content" id="" cols="60" rows="30">
-		</textarea>
-		<input type="submit">
-	</form>
+	<div>
+		<form action="/topic" method="post">
+			<input type="hidden" name="topic_id" value="<%= @id %>">
+			<input type="hidden" name="user_id" value="<%= current_user['id'] %>">
+			<label for="title">Title:</label>
+			<input type="text" name="title">
+			<label for="content">Content:</label>
+			<textarea type="text" name="content" id="" cols="60" rows="30">
+			</textarea>
+			<input type="submit">
+		</form>
+	</div>
 <% else %>
 	<a href="/login">you must login to post</a>
 	<a href="/signup">signup</a>

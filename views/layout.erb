@@ -11,7 +11,9 @@
 </head>
 <body>
 	<header>
-		<h1>Compact living</h1>
+		<div>
+			<h1>Compact living</h1>
+		</div>
 		<% if @status %>
 			<p>hi <%= current_user['username']%></p>
 			<a href="/logout">Logout</a>
@@ -21,6 +23,12 @@
 		<% end %>
 
 	</header>
-	<%= yield %>
+	<div class="main">
+		<%= yield %>	
+	</div>
+	<footer>
+		
+	</footer>
+	
 </body>
 </html>
