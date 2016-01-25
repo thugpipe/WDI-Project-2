@@ -14,7 +14,7 @@ module Forum
                 host: ENV["POSTGRES_HOST"],
                 password: ENV["POSTGRES_PASS"],
                 user: ENV["POSTGRES_USER"]
-                )
+            )
         else
             @@db = PG.connect({dbname: "compact_living_dev"})
         end
