@@ -2,7 +2,7 @@
 
 <%  @posts.each do |x| %>
 	
-	<div class="six columns" id="post<%= x['id'] %>"
+	<div class="twelve columns" id="post<%= x['id'] %>">
 		<h3> <a href="/post/<%= x['id'] %>"><%= x["title"] %></a> </h3>
 		<h5>Posted By: <%= x["username"]%> post no. <%= x["id"]%></h5>
 		<h6><%= x['num_comments']%> Comments</h6>
@@ -20,7 +20,7 @@
 
 <% end %>
 <% if @status %>
-	<div>
+	<div class="six columns">
 		<form action="/topic" method="post">
 			<input type="hidden" name="topic_id" value="<%= @id %>">
 			<input type="hidden" name="user_id" value="<%= current_user['id'] %>">
@@ -33,6 +33,6 @@
 		</form>
 	</div>
 <% else %>
-	<a href="/login">you must login to post</a>
-	<a href="/signup">signup</a>
+	<div class="button"><a href="/login">you must login to post</a></div>
+	<div class="button"><a href="/signup">signup</a></div>
 <% end %>
