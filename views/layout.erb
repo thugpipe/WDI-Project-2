@@ -4,26 +4,33 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>Small Things Forum</title>
-	<link rel="stylesheet" href="/style.css" type="text/css">
 	<link rel="stylesheet" href="/normalize.css" type="text/css">
 	<link rel="stylesheet" href="/skeleton.css" type="text/css">
+	<link rel="stylesheet" href="/style.css" type="text/css">
 	
 </head>
 <body>
 	<header>
-		<div>
+		<div class="navBar">
+		<ul class="clearfix">
+			<li><a href="/">Home</a></li>
+			<li><a href="/topics">Catagories</a></li>
+			<% if @status %>
+				<li><p>hi <%= current_user['username']%></p></li>
+				<li><a href="/logout">Logout</a></li>
+			<% else %>
+				<li><a href="/login">Login</a></li>
+				<li><a href="/signup">Signup</a></li>
+			<% end %>
+		</ul>
+		</div>
+
+		<div class="headBanner">
 			<h1>Compact living</h1>
 		</div>
-		<% if @status %>
-			<p>hi <%= current_user['username']%></p>
-			<a href="/logout">Logout</a>
-		<% else %>
-			<a href="/login">Login</a>
-			<a href="/signup">Signup</a>
-		<% end %>
-
+		
 	</header>
-	<div class="main">
+	<div class="container main">
 		<%= yield %>	
 	</div>
 	<footer>

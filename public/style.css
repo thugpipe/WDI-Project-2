@@ -1,6 +1,30 @@
+.clearfix:before,
+.clearfix:after {
+  content: ".";
+  display: block;
+  height: 0;
+  overflow: hidden;
+}
+.clearfix:after {
+    clear: both;
+}
+.clearfix {
+    zoom: 1; /* IE < 8 */
+}
+
+a{
+	text-decoration: none;
+	color:black;
+}
+
+a:hover{
+	color: orange;
+}
+
 body{
 	color: #000000;
 	background-color: #777777;
+	box-sizing: border-box;
 }
 
 header{
@@ -15,13 +39,30 @@ footer{
 	height:100px;
 }
 
-header>div{
+.headBanner{
 	background-color: rgba(0,0,0,0.5);
 }
 
-header>div>h1{
+header div h1{
 	font-size: 60pt;
 	color: white;
+}
+
+.navBar{
+	background-color: white;
+}
+
+header ul{
+	width: 60%;
+	max-width: 960px;
+	margin:0 auto;
+
+}
+header ul li{
+	display: inline-block;
+	width: 25%;
+	float: left;
+	font-size: 20pt;
 }
 
 .main{

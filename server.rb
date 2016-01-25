@@ -8,7 +8,16 @@ module Forum
 	class Server <Sinatra::Base
 		enable :sessions
 
-		@@db = PG.connect({dbname: "compact_living_dev"})
+		if ENV["RACK_ENV"] == 'production'
+            @@db = PG.connect(
+                dbname: ENV["POSTGRES_DB"],
+                host: ENV["POSTGRES_HOST"],
+                password: ENV["POSTGRES_PASS"],
+                user: ENV["POSTGRES_USER"]
+                )
+        else
+            @@db = PG.connect({dbname: "compact_living_dev"})
+        end
 
 		def current_user
 			@user = @@db.exec_params("SELECT * FROM users WHERE id = $1",[session["user_id"]]).first 
@@ -22,7 +31,7 @@ module Forum
 
 		get "/topics" do
 			@status = session["user_id"]
-			@threads = @@db.exec("SELECT * FROM threads").to_a
+			@threads = @@db.exec("SELECT * FROM threads ORDER BY id").to_a
 			session["current_page"] = "/topics"
 
 			erb :topics
@@ -129,6 +138,7 @@ module Forum
 				SELECT comments.id, user_id, content, username
 				FROM comments INNER JOIN users ON (comments.user_id = users.id)
 				WHERE post_id = #{@id}
+				ORDER BY comments.id
 				SQL
 
 			session["current_page"] = "/post/#{@id}"
@@ -137,14 +147,18 @@ module Forum
 
 		end
 
-		post "/post" do
+		post "/comment" do
 			post_id = params["post_id"]
 			comment = params["comment"]
-			user_id = params["user_id"]
+			user_id = session["user_id"]
 
-			@@db.exec_params(<<-SQL,[post_id, user_id, comment])
-				INSERT INTO comments (post_id, user_id, content) VALUES ($1,$2,$3)
-				SQL
+			if user_id
+				@@db.exec_params(<<-SQL,[post_id, user_id, comment])
+					INSERT INTO comments (post_id, user_id, content) VALUES ($1,$2,$3)
+					SQL
+			else
+				redirect '/login'
+			end
 
 			redirect '/post/' + post_id
 
