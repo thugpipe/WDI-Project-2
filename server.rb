@@ -1,7 +1,6 @@
 require "sinatra"
 require "bcrypt"
 require "pg"
-require "pry"
 require "redcarpet"
 
 module Forum
